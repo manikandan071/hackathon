@@ -1,10 +1,12 @@
 import React from "react";
 import * as teamsJs from "@microsoft/teams-js";
+import MobileLayout from "../Components/MobileLayout/MobileLayout";
 
 import "./App.css";
 
 export default function App() {
   const [content, setContent] = React.useState("");
+  console.log("App component rendered", content);
 
   React.useEffect(() => {
     (async () => {
@@ -20,27 +22,7 @@ export default function App() {
 
   return (
     <div className="App">
-      <h1>👋 Welcome</h1>
-
-      {content && (
-        <div className="result">
-          <pre>
-            <code>{content}</code>
-          </pre>
-        </div>
-      )}
-
-      <p>
-        For more information, please refer to the{" "}
-        <a
-          href="https://aka.ms/teams-ai-library-v2"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Microsoft Teams SDK 111
-        </a>
-        .
-      </p>
+      <MobileLayout />
     </div>
   );
 }

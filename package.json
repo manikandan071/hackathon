@@ -9,6 +9,7 @@
         "README.md"
     ],
     "dependencies": {
+        "@ant-design/icons": "^6.1.0",
         "@microsoft/teams.api": "^2.0.0",
         "@microsoft/teams.apps": "^2.0.0",
         "@microsoft/teams.cards": "^2.0.0",

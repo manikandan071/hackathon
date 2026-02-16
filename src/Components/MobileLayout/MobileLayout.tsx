@@ -3,6 +3,7 @@ import "./MobileLayout.css";
 import BottomNav from "../BottomNav/BottomNav";
 import ProfileHeader from "../ProfileHeader/ProfileHeader";
 import TodayJobs from "../TodayJobs/TodayJobs";
+import Performance from "../Performance/Performance";
 
 const MobileLayout: React.FC = ({}: any) => {
   const [tabName, setTabName] = useState("home");
@@ -16,7 +17,7 @@ const MobileLayout: React.FC = ({}: any) => {
         />
       )}
       {tabName === "Today Jobs" && <TodayJobs />}
-
+      {tabName == "trophy" && <Performance />}
       <BottomNav tabName={tabName} setTabName={setTabName} />
     </div>
   );

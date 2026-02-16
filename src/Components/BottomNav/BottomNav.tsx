@@ -21,8 +21,8 @@ const BottomNav: React.FC<IBottomNavProps> = ({ tabName, setTabName }) => {
           <HomeOutlined />
         </div>
         <div
-          className={`${tabName === "analytics" ? "nav-item active" : "nav-item"}`}
-          onClick={() => setTabName("analytics")}
+          className={`${tabName === "Today Jobs" ? "nav-item active" : "nav-item"}`}
+          onClick={() => setTabName("Today Jobs")}
         >
           <LineChartOutlined />
         </div>
@@ -32,6 +32,7 @@ const BottomNav: React.FC<IBottomNavProps> = ({ tabName, setTabName }) => {
         >
           <TrophyOutlined />
         </div>
+
         <div
           className={`${tabName === "profile" ? "nav-item active" : "nav-item"}`}
           onClick={() => setTabName("profile")}

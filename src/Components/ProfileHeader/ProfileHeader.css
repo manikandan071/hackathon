@@ -1,0 +1,67 @@
+.profile_header {
+  padding: 20px;
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #003479;
+}
+
+.profile_left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile_avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.profile_name {
+  font-size: 16px;
+  font-weight: 600; /* Euclid Circular A Semibold */
+}
+
+.profile_location {
+  font-size: 12px;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.location_icon {
+  font-size: 12px;
+}
+
+.notification_wrapper {
+  width: 40px;
+  height: 40px;
+  background: #fbf2e7;
+  backdrop-filter: blur(10px);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.notification_icon {
+  font-size: 18px;
+  color: #003479;
+}
+
+.notification_dot {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  width: 6px;
+  height: 6px;
+  background: #ff3b30;
+  border-radius: 50%;
+}

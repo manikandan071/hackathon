@@ -1,7 +1,7 @@
 import React from "react";
 import * as teamsJs from "@microsoft/teams-js";
 import MobileLayout from "../Components/MobileLayout/MobileLayout";
-
+import "../Asset/css/font.css";
 import "./App.css";
 
 export default function App() {

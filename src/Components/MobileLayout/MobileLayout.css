@@ -1,6 +1,5 @@
 .mobile-wrapper {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #cfd3e6, #b0b4d6);
+    min-height: 80vh;
     padding-bottom: 120px;
 }
 

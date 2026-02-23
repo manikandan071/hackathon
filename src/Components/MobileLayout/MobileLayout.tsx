@@ -1,24 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import "./MobileLayout.css";
-import BottomNav from "../BottomNav/BottomNav";
-import ProfileHeader from "../ProfileHeader/ProfileHeader";
-import TodayJobs from "../TodayJobs/TodayJobs";
-import Performance from "../Performance/Performance";
+import App from "../NewApp/NewApp";
+// import BottomNav from "../BottomNav/BottomNav";
+// import TodayJobs from "../TodayJobs/TodayJobs";
+// import Performance from "../Performance/Performance";
+// import HomePage from "../HomePage/HomePage";
 
 const MobileLayout: React.FC = ({}: any) => {
-  const [tabName, setTabName] = useState("home");
+  // const [tabName, setTabName] = useState("home");
   return (
     <div className="mobile-wrapper">
-      {tabName === "home" && (
-        <ProfileHeader
-          name="Fateha Nil"
-          location="Dubai, Marina, UAE"
-          image="https://randomuser.me/api/portraits/women/44.jpg"
-        />
-      )}
+      {/* {tabName === "home" && <HomePage />}
       {tabName === "Today Jobs" && <TodayJobs />}
       {tabName == "trophy" && <Performance />}
-      <BottomNav tabName={tabName} setTabName={setTabName} />
+      <BottomNav tabName={tabName} setTabName={setTabName} /> */}
+      <App />
     </div>
   );
 };

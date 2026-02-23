@@ -1,0 +1,230 @@
+/* AllJobsListView.css */
+
+.jobs-container {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    /* font-family: "Inter", sans-serif; */
+}
+
+/* Search Section */
+
+.search-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 48px 15px 56px;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 28px;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    outline: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    border-color: #5b5fc7;
+    box-shadow: 0 0 0 4px rgba(91, 95, 199, 0.1);
+}
+
+.filter-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 6px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: color 0.2s ease;
+}
+
+.filter-btn:hover {
+    color: #5b5fc7;
+}
+
+/* Tags */
+
+.tags-container {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+}
+
+.tag-btn {
+    padding: 10px 20px;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.tag-btn:hover {
+    background: #5b5fc7;
+    color: white;
+}
+
+/* Results */
+
+.results-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.results-title {
+    font-size: 10px;
+    font-weight: 900;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    padding-left: 8px;
+}
+
+/* Job Card */
+
+.job-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 5px 15px #0000000a;
+}
+
+.job-card:hover {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.job-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.job-icon.completed {
+    background: #10b98124;
+    color: #10b981;
+}
+.job-icon.in-progress {
+    background: #fff3c3a3;
+    color: #f5a623;
+}
+.job-icon.pending {
+    background: #ec2f2f1c;
+    color: #ec2f2f;
+}
+
+.job-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.job-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.all-job-id {
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #a5b4fc;
+}
+
+.priority {
+    font-size: 8px;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 8px;
+}
+
+.priority-high {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.priority-normal {
+    background: #f8fafc;
+    color: #94a3b8;
+}
+
+.job-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #242424;
+    margin: 8px 0px; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s ease;
+}
+
+.job-card:hover .job-title {
+    color: #5b5fc7;
+}
+
+.job-customer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #cbd5e1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chevron {
+    color: #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.job-card:hover .chevron {
+    color: #5b5fc7;
+    transform: translateX(4px);
+}

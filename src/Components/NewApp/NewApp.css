@@ -1,0 +1,167 @@
+body {
+    margin: 0;
+    /* font-family: 'Inter', sans-serif; */
+    background: #e5e7eb;
+}
+
+/* App Container */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 420px;
+    margin: auto;
+    background: #F3F2F1;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Header */
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.settings-box {
+    width: 36px;
+    height: 36px;
+    background: #5B5FC7;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #5B5FC7;
+}
+
+.app-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #242424;
+}
+
+.app-title span {
+    color: #5B5FC7;
+}
+
+/* Notification */
+.notification-button {
+    background: #f1f5f9;
+    border: none;
+    padding: 8px;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background: #C4314B;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+/* Main */
+.app-main {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 110px;
+    background: #fff;
+}
+
+.app-main::-webkit-scrollbar {
+    display: none;
+}
+
+.app-main {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* .tab-content {
+    padding-bottom: 120px;
+} */
+
+/* Navigation Wrapper */
+.nav-wrapper {
+    position: fixed;
+    bottom: 24px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+}
+
+/* Dark Dock */
+.nav-dock-dark {
+    background: #111827;
+    padding: 8px;
+    border-radius: 28px;
+    width: 320px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    align-items: center !important;
+}
+
+/* Nav Item */
+.nav-item {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    background: transparent;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+.nav-item.active {
+    background: #5B5FC7;
+    font-family: inherit;
+    letter-spacing: 1px;
+}
+
+.nav-icon {
+    color: #9ca3af;
+    transition: all 0.25s ease;
+}
+
+.nav-icon.active {
+    color: white;
+}
+
+.nav-label {
+    font-size: 9px;
+    font-weight: 600;
+    margin-top: 4px;
+    color: white;
+    text-transform: uppercase;
+}

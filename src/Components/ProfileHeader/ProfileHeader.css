@@ -1,6 +1,35 @@
+.profile_header_wrapper{
+  padding: 10px 20px 20px 20px;
+  background:
+      linear-gradient(180deg,
+        #ffffff70,
+        #3c186b),
+      url("../../Asset/Images/banner.jpg");
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat;
+  border-radius: 0px 0px 32px 32px;
+  /* background-position-y: 20px; */
+}
+
+/* .profile_header_wrapper {
+  padding: 10px 20px 20px 20px;
+  position: relative;
+  background: linear-gradient(135deg, #6a5acd, #8a2be2);
+  overflow: hidden;
+}
+
+.profile_header_wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../../Asset/Images/banner.jpg") top/cover no-repeat;
+  filter: blur(1px);
+  opacity: 0.5;
+  z-index: -1;
+} */
+
 .profile_header {
-  padding: 20px;
-  border-radius: 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -22,12 +51,12 @@
 }
 
 .profile_name {
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 600; /* Euclid Circular A Semibold */
 }
 
 .profile_location {
-  font-size: 12px;
+  font-size: 8px;
   opacity: 0.9;
   display: flex;
   align-items: center;
@@ -35,14 +64,14 @@
 }
 
 .location_icon {
-  font-size: 12px;
+  font-size: 8px;
 }
 
 .notification_wrapper {
   width: 40px;
   height: 40px;
-  background: #fbf2e7;
-  backdrop-filter: blur(10px);
+  /* background: #fbf2e7; */
+  /* backdrop-filter: blur(10px); */
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -64,4 +93,18 @@
   height: 6px;
   background: #ff3b30;
   border-radius: 50%;
+}
+.banner-content{
+  padding: 10px 0px 20px 0px;
+}
+.banner-content p{
+  margin: 0;
+  font-size: 20px;
+  color: #3c186b;
+  font-weight: 600;
+}
+.banner-content span{
+  color: #fff;
+  font-size: 11px;
+  opacity: 0.9;
 }

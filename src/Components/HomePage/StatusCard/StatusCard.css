@@ -1,0 +1,76 @@
+/* StatusCard.css */
+
+.Status-card {
+    width: 100%;
+    background: #3c186b;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    margin-top: -25px;
+}
+.Status-card .card-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.Status-card .card-header h3 {
+    margin: 0;
+    font-weight: 500;
+    font-size: 13px;
+    color: #fff;
+    opacity: 0.8;
+}
+
+.Status-card .card-header p {
+    margin: 0px;
+    color: #888;
+    font-size: 11px;
+}
+
+.Status-card .card-body {
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+}
+
+.Status-card .card-body h1 {
+    font-size: 35px;
+    margin: 0;
+    color: #fff;
+}
+
+.Status-card .card-body h1 span {
+    font-size: 17px;
+    color: #888;
+}
+
+.Status-card .completed-text {
+    color: #888;
+    margin: 0px;
+    font-size: 11px;
+}
+
+.Status-card .circle {
+    position: relative;
+}
+
+.Status-card .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+}
+
+.Status-card .rating {
+    font-size: 20px;
+    color: #fff;
+}
+
+.Status-card .status-text {
+    font-weight: 500;
+    color: #fff;
+    font-size: 11px;
+    opacity: 0.8;
+}

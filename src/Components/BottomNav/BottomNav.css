@@ -3,11 +3,11 @@
 }
 .bottom-nav-container {
     position: fixed;
-    bottom: 20px;
+    bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
     width: 85%;
-    height: 65px;
+    height: 55px;
     background: #000000a6;
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(25px);
@@ -32,12 +32,12 @@
 }
 
 .nav-item {
-    font-size: 22px;
+    font-size: 18px;
     color: #d4d7dc;
     cursor: pointer;
     transition: 0.3s ease;
-    padding: 0px 15px;
-    height: 52px;
+    padding: 0px 12px;
+    height: 42px;
     display: flex;
     border-radius: 50px;
 }

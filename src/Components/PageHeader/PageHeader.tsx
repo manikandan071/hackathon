@@ -9,10 +9,11 @@ interface Props {
 }
 
 const PageHeader: React.FC<Props> = ({ title, showBack = true }) => {
+  console.log("showBack", showBack);
   return (
     <div className="header">
       <div className="left">
-        {showBack && (
+        {/* {showBack && (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -26,7 +27,7 @@ const PageHeader: React.FC<Props> = ({ title, showBack = true }) => {
               d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
             />
           </svg>
-        )}
+        )} */}
         <div className="title">{title}</div>
       </div>
     </div>

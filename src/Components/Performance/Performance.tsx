@@ -13,7 +13,6 @@ const Performance = () => {
     jobsCompleted: 24,
     rating: 4,
   };
-
   const activities = [
     {
       id: 1,

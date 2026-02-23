@@ -1,10 +1,10 @@
 .today-job-wrapper{
-    padding: 20px;
+    padding: 0px 10px 10px 10px;
 }
 .card {
     /* background: linear-gradient(135deg, #3a0ca3, #7209b7); */
-    border-radius: 25px;
-    padding: 20px;
+    border-radius: 20px;
+    padding: 15px;
     color: white;
 
     background:
@@ -17,6 +17,7 @@
         background-position: right;
         background-repeat: no-repeat;
     /* box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); */
+    margin: 1px;
 }
 .cardHeader {
     display: flex;
@@ -28,7 +29,7 @@
     opacity: 0.7;
 }
 .cardBody {
-    margin-top: 15px;
+    margin-top: 10px;
     display: flex;
     justify-content: space-between;
     gap: 15px;
@@ -36,8 +37,8 @@
 
 .leftSection {
     flex: 1;
-    padding: 10px;
-    background: #736ef1;
+    padding: 10px 15px;
+    background: #3c186b;
     border-radius: 15px;
 }
 
@@ -62,7 +63,7 @@
 .progressFill {
     width: 60%;
     height: 100%;
-    background: #4cc9f0;
+    background: #f29d2e;
     border-radius: 10px;
 }
 
@@ -73,14 +74,14 @@
     align-self: center;
 }
 .statBox {
-    background: rgba(255, 255, 255, 0.15);
+    background: #3c186b;
     padding: 7px 12px;
     border-radius: 14px;
     font-size: 11px;
     display: flex;
     justify-content: space-between;
     gap: 15px;
-    border: 1px solid #736ef1;
+    border: 1px solid #736ef130;
 }
 .bottomActions {
     margin-top: 20px;
@@ -104,4 +105,36 @@
         flex: 1;
         font-family: inherit;
     }
+}
+
+.startBtn {
+    background: #E9E5FF;
+    color: #5B4FD3;
+    border: none;
+    padding: 6px 14px 7px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.rescheduleBtn {
+    background: #F1F1F4;
+    color: #6B6B76;
+    border: none;
+    padding: 6px 14px 7px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.completeBtn {
+    background: #d8f3dc;
+    color: #40916c;
+    border: none;
+    padding: 6px 14px 7px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
 }

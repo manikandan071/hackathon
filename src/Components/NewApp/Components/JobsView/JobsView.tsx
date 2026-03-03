@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 // import { motion } from "framer-motion";
 import {
   Search,
@@ -11,36 +11,44 @@ import {
   CheckCircle,
   ArrowRight,
 } from "lucide-react";
-import { MOCK_JOBS } from "../../constants";
 import { JobStatus, Job } from "../../types";
 import "./JobsView.css";
 
+import { getTime } from "../../../../Asset/Utils/commonUtils";
+
 interface JobsViewProps {
+  allJobs: Job[];
   onViewAllJobs: () => void;
   onJobClick: (job: Job) => void;
 }
 
-const JobsView: React.FC<JobsViewProps> = ({ onViewAllJobs, onJobClick }) => {
+const JobsView: React.FC<JobsViewProps> = ({
+  allJobs,
+  onViewAllJobs,
+  onJobClick,
+}) => {
+  // const [allJobs, setAllJobs] = useState<Job[]>([]);
   const [activeFilter, setActiveFilter] = useState<JobStatus | "Overall">(
     "Overall",
   );
   const [searchQuery, setSearchQuery] = useState("");
 
+  console.log("All Jobs:", allJobs);
+
   const stats = useMemo(
     () => ({
-      total: MOCK_JOBS.length,
-      notStarted: MOCK_JOBS.filter((j) => j.status === JobStatus.NOT_STARTED)
+      total: allJobs.length,
+      notStarted: allJobs.filter((j) => j.status === JobStatus.NOT_STARTED)
         .length,
-      inProgress: MOCK_JOBS.filter((j) => j.status === JobStatus.IN_PROGRESS)
+      inProgress: allJobs.filter((j) => j.status === JobStatus.IN_PROGRESS)
         .length,
-      completed: MOCK_JOBS.filter((j) => j.status === JobStatus.COMPLETED)
-        .length,
+      completed: allJobs.filter((j) => j.status === JobStatus.COMPLETED).length,
     }),
-    [],
+    [allJobs],
   );
 
   const filteredJobs = useMemo(() => {
-    return MOCK_JOBS.filter((job) => {
+    return allJobs.filter((job) => {
       const matchesFilter =
         activeFilter === "Overall" || job.status === activeFilter;
       const matchesSearch =
@@ -48,7 +56,11 @@ const JobsView: React.FC<JobsViewProps> = ({ onViewAllJobs, onJobClick }) => {
         job.customer.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesFilter && matchesSearch;
     });
-  }, [activeFilter, searchQuery]);
+  }, [activeFilter, searchQuery, allJobs]);
+
+  useEffect(() => {
+    console.log("Render");
+  }, []);
 
   return (
     <div className="jobs-container">
@@ -99,7 +111,7 @@ const JobsView: React.FC<JobsViewProps> = ({ onViewAllJobs, onJobClick }) => {
         <Search className="search-icon" size={18} />
         <input
           type="text"
-          placeholder="Filter your tasks..."
+          placeholder="Filter your jobs..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -107,7 +119,7 @@ const JobsView: React.FC<JobsViewProps> = ({ onViewAllJobs, onJobClick }) => {
 
       <div className="task-section">
         <div className="task-header">
-          <h3>{activeFilter} Tasks</h3>
+          <h3>{activeFilter} Jobs</h3>
           <button onClick={onViewAllJobs} className="inventory-btn">
             All jobs <ArrowRight size={14} />
           </button>
@@ -176,7 +188,7 @@ const CompactJobCard: React.FC<{ job: Job; onClick: () => void }> = ({
       <div className={`status-bar ${statusClass}`} />
       <div className="job-content">
         <div className="job-top">
-          <span className="view-job-id">{job.id}</span>
+          <span className="view-job-id">J000{job.id}</span>
           <span className={`view-priority-badge ${priorityClass}`}>
             {job.priority}
           </span>
@@ -187,7 +199,12 @@ const CompactJobCard: React.FC<{ job: Job; onClick: () => void }> = ({
             <MapPin size={12} /> {job.customer}
           </span>
           <span>
-            <Clock size={12} /> {job.time}
+            <Clock size={12} />{" "}
+            {job.startDate && job.endDate
+              ? getTime(job.startDate) + " - " + getTime(job.endDate)
+              : job.startDate
+                ? getTime(job.startDate) + " - " + "In Progress"
+                : "Not started"}
           </span>
         </div>
       </div>

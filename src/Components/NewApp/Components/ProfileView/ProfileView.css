@@ -1,7 +1,6 @@
 .profile-container {
     padding-bottom: 24px;
     /* font-family: "Inter", sans-serif; */
-    background: #f8f9fb;
     display: flex;
     flex-direction: column;
     gap: 24px;

@@ -1,6 +1,6 @@
-import { Job, JobStatus, Activity, PerformanceStats } from "./types";
+import { JobStatus, Activity, PerformanceStats } from "./types";
 
-export const MOCK_JOBS: Job[] = [
+export const MOCK_JOBS: any[] = [
   {
     id: "JOB-001",
     title: "AC Maintenance & Filter Replacement",

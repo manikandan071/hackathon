@@ -1,93 +1,194 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Home,
   ClipboardList,
   TrendingUp,
   User,
   Bell,
-  Settings,
   ArrowLeft,
 } from "lucide-react";
-// import { motion, AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
-import HomeView from "./Components/HomeView/HomeView";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
-import "./NewApp.css";
+import { PublicClientApplication } from "@azure/msal-browser";
+
+import HomeView from "./Components/HomeView/HomeView";
 import JobsView from "./Components/JobsView/JobsView";
 import PerformanceView from "./Components/PerformanceView/PerformanceView";
 import ProfileView from "./Components/ProfileView/ProfileView";
 import ActivityHistoryView from "./Components/ActivityHistoryView/ActivityHistoryView";
 import AllJobsListView from "./Components/AllJobsListView/AllJobsListView";
-import { TabType, Job } from "./types";
 import TaskDetailView from "./Components/TaskDetailView/TaskDetailView";
-type ViewState = "tabs" | "activityHistory" | "allJobs" | "taskDetail";
 
-const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("home");
-  const [viewStack, setViewStack] = useState<ViewState[]>(["tabs"]);
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+import "./NewApp.css";
+import { getAccessToken } from "../../Asset/Config/authService";
+import { Job } from "./types";
+import {
+  getCurrentUser,
+  getEmployeeDetails,
+  getjobsDetails,
+  getRecentActivities,
+} from "./Services";
 
-  const currentView = viewStack[viewStack.length - 1];
-  const isSubView = currentView !== "tabs";
-  console.log("Current View:", currentView, "Is SubView:", isSubView);
+export interface IActivities {
+  id: number;
+  title: string;
+  description: string;
+  job: number;
+  created: string;
+}
 
-  const navigateTo = (view: ViewState, job?: Job) => {
-    if (job) setSelectedJob(job);
+const NewApp: React.FC = () => {
+  const msalConfig = {
+    auth: {
+      clientId: "8d876036-c3cf-4739-89b1-3e98fd2cb857",
+      authority:
+        "https://login.microsoftonline.com/3e8e53be-a48f-4147-adf8-7e90a6e46b57",
+      redirectUri: "/",
+    },
+    cache: {
+      cacheLocation: "sessionStorage",
+      storeAuthStateInCookie: false,
+    },
+    system: {
+      allowPlatformBroker: true,
+    },
+  };
 
-    if (view === "tabs") {
-      setViewStack(["tabs"]);
-    } else {
-      setViewStack((prev) => [...prev, view]);
+  const msalInstance = new PublicClientApplication(msalConfig);
+
+  (async () => {
+    await msalInstance.initialize();
+    await msalInstance.handleRedirectPromise();
+    const accounts = msalInstance.getAllAccounts();
+    if (accounts.length > 0) {
+      msalInstance.acquireTokenSilent({
+        scopes: ["https://graph.microsoft.com/.default"],
+        account: accounts[0],
+      });
     }
-  };
+  })();
 
-  const goBack = () => {
-    if (viewStack.length > 1) {
-      setViewStack((prev) => prev.slice(0, -1));
+  const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const [recentActivities, setRecentActivities] = useState<IActivities[]>([]);
+  const [employeeDetails, setEmployeeDetails] = useState<any>([]);
+  console.log("recentActivities:", recentActivities);
+  console.log("employeeDetails:", employeeDetails);
+
+  const usePageMeta = () => {
+    const location = useLocation();
+
+    if (location.pathname.startsWith("/home/activity-history")) {
+      return { title: "Logs", isSubView: true };
     }
-  };
-
-  const handleJobClick = (job: Job) => {
-    navigateTo("taskDetail", job);
-  };
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "home":
-        return (
-          <HomeView onViewAllActivities={() => navigateTo("activityHistory")} />
-        );
-      case "jobs":
-        return (
-          <JobsView
-            onViewAllJobs={() => navigateTo("allJobs")}
-            onJobClick={handleJobClick}
-          />
-        );
-      case "performance":
-        return <PerformanceView />;
-      case "profile":
-        return <ProfileView />;
-      default:
-        return (
-          <HomeView onViewAllActivities={() => navigateTo("activityHistory")} />
-        );
+    if (location.pathname.startsWith("/jobs/all")) {
+      return { title: "All Jobs", isSubView: true };
     }
+    if (location.pathname.startsWith("/jobs/")) {
+      return { title: "Task Details", isSubView: true };
+    }
+
+    return {
+      title: (
+        <>
+          Field <span>Service</span>
+        </>
+      ),
+      isSubView: false,
+    };
   };
 
-  // const isSubView = currentView !== "tabs";
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { title, isSubView } = usePageMeta();
 
+  const activeTab = location.pathname.startsWith("/jobs")
+    ? "jobs"
+    : location.pathname.startsWith("/performance")
+      ? "performance"
+      : location.pathname.startsWith("/profile")
+        ? "profile"
+        : "home";
+
+  useEffect(() => {
+    (async () => {
+      const accessToken = await getAccessToken(msalInstance);
+      console.log("Access Token:", accessToken);
+      const user = await getCurrentUser(accessToken ? accessToken : "");
+      getjobsDetails(accessToken, setAllJobs);
+      getRecentActivities(accessToken, setRecentActivities);
+      getEmployeeDetails(accessToken, setEmployeeDetails, user.mail);
+    })();
+  }, []);
+
+  const openJobDetails = (jobId: number) => {
+    navigate(`/jobs/${jobId}`);
+  };
   return (
     <div className="app-container">
-      {/* Header */}
-      <header className="app-header">
+      {/* Top Navigation */}
+      <nav className="top-nav">
+        <div className="nav-inner">
+          {isSubView ? (
+            <div className="header-left">
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => navigate(-1)}
+                className="back-button"
+              >
+                <ArrowLeft size={24} />
+              </motion.button>
+              <h1 className="app-title">{title}</h1>
+            </div>
+          ) : (
+            <div className="tab-wrapper">
+              <NavButton
+                active={activeTab === "home"}
+                onClick={() => navigate("/home")}
+                icon={<Home size={20} />}
+                label="Home"
+              />
+              <NavButton
+                active={activeTab === "jobs"}
+                onClick={() => navigate("/jobs")}
+                icon={<ClipboardList size={20} />}
+                label="Jobs"
+              />
+              <NavButton
+                active={activeTab === "performance"}
+                onClick={() => navigate("/performance")}
+                icon={<TrendingUp size={20} />}
+                label="Stats"
+              />
+              <NavButton
+                active={activeTab === "profile"}
+                onClick={() => navigate("/profile")}
+                icon={<User size={20} />}
+                label="Me"
+              />
+            </div>
+          )}
+
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            className="notification-button"
+          >
+            <Bell size={18} />
+            <span className="notification-dot"></span>
+          </motion.button>
+        </div>
+      </nav>
+      {/* HEADER */}
+      {/* <header className="app-header">
         <div className="header-left">
           {isSubView ? (
-            <button
-              //   whileTap={{ scale: 0.9 }}
-              onClick={goBack}
-              className="back-button"
-            >
+            <button onClick={() => navigate(-1)} className="back-button">
               <ArrowLeft size={22} />
             </button>
           ) : (
@@ -95,93 +196,109 @@ const App: React.FC = () => {
               <Settings size={18} color="#fff" />
             </div>
           )}
-          <h1 className="app-title">
-            {currentView === "activityHistory" ? (
-              "Logs"
-            ) : currentView === "allJobs" ? (
-              "All Jobs"
-            ) : currentView === "taskDetail" ? (
-              "Task Details"
-            ) : (
-              <>
-                Field <span>Service</span>
-              </>
-            )}
-          </h1>
+          <h1 className="app-title">{title}</h1>
         </div>
 
         {!isSubView && (
-          <button
-            // whileTap={{ scale: 0.95 }}
-            className="notification-button"
-          >
+          <button className="notification-button">
             <Bell size={20} />
             <span className="notification-dot" />
           </button>
         )}
-      </header>
+      </header> */}
 
-      {/* Main View */}
-      <main className="app-main">
-        <div>
-          {currentView === "tabs" ? (
-            <div
-              key={activeTab}
-              // initial={{ opacity: 0, scale: 0.98 }}
-              // animate={{ opacity: 1, scale: 1 }}
-              // exit={{ opacity: 0, scale: 0.98 }}
-              // transition={{ duration: 0.2 }}
-              className="tab-content"
-            >
-              {renderTabContent()}
-            </div>
-          ) : currentView === "activityHistory" ? (
-            <ActivityHistoryView />
-          ) : currentView === "allJobs" ? (
-            <AllJobsListView onJobClick={handleJobClick} />
-          ) : (
-            <TaskDetailView job={selectedJob} />
-          )}
-        </div>
+      {/* MAIN CONTENT */}
+      <main className={`app-main`}>
+        <Routes>
+          <Route path="/" element={<Navigate to="/home" replace />} />
+
+          <Route
+            path="/home"
+            element={
+              <HomeView
+                onViewAllActivities={() => navigate("/home/activity-history")}
+                onViewTodayJobs={() => navigate("/jobs")}
+                openJobDetails={openJobDetails}
+                recentActivities={recentActivities}
+              />
+            }
+          />
+          <Route
+            path="/home/activity-history"
+            element={
+              <ActivityHistoryView
+                recentActivities={recentActivities}
+                openJobDetails={openJobDetails}
+              />
+            }
+          />
+
+          <Route
+            path="/jobs"
+            element={
+              <JobsView
+                allJobs={allJobs}
+                onJobClick={(job) => navigate(`/jobs/${job.id}`)}
+                onViewAllJobs={() => navigate("/jobs/all")}
+              />
+            }
+          />
+          <Route
+            path="/jobs/all"
+            element={
+              <AllJobsListView
+                onJobClick={(job) => navigate(`/jobs/${job.id}`)}
+              />
+            }
+          />
+          <Route
+            path="/jobs/:jobId"
+            element={<TaskDetailView allJobs={allJobs} />}
+          />
+
+          <Route path="/performance" element={<PerformanceView />} />
+          <Route
+            path="/profile"
+            element={<ProfileView employeeDetails={employeeDetails[0]} />}
+          />
+        </Routes>
       </main>
-      {/* Dark Flat Navigation */}
-      <div>
-        {!isSubView && (
-          <motion.div
-            initial={{ y: 80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 80, opacity: 0 }}
-            className="nav-wrapper"
-          >
-            <nav className="nav-dock-dark">
-              <NavButton
-                active={activeTab === "home"}
-                onClick={() => setActiveTab("home")}
-                icon={<Home size={20} />}
-                label="Home"
-              />
-              <NavButton
-                active={activeTab === "jobs"}
-                onClick={() => setActiveTab("jobs")}
-                icon={<ClipboardList size={20} />}
-                label="Tasks"
-              />
-              <NavButton
-                active={activeTab === "performance"}
-                onClick={() => setActiveTab("performance")}
-                icon={<TrendingUp size={20} />}
-                label="Stats"
-              />
-              <NavButton
-                active={activeTab === "profile"}
-                onClick={() => setActiveTab("profile")}
-                icon={<User size={20} />}
-                label="Me"
-              />
-            </nav>
-          </motion.div>
-        )}
-      </div>
+
+      {/* BOTTOM NAV */}
+      {/* {!isSubView && (
+        <motion.div
+          initial={{ y: 80 }}
+          animate={{ y: 0 }}
+          className="nav-wrapper"
+        >
+          <nav className="nav-dock-dark">
+            <NavButton
+              active={activeTab === "home"}
+              onClick={() => navigate("/home")}
+              icon={<Home size={20} />}
+              label="Home"
+            />
+            <NavButton
+              active={activeTab === "jobs"}
+              onClick={() => navigate("/jobs")}
+              icon={<ClipboardList size={20} />}
+              label="Jobs"
+            />
+            <NavButton
+              active={activeTab === "performance"}
+              onClick={() => navigate("/performance")}
+              icon={<TrendingUp size={20} />}
+              label="Stats"
+            />
+            <NavButton
+              active={activeTab === "profile"}
+              onClick={() => navigate("/profile")}
+              icon={<User size={20} />}
+              label="Me"
+            />
+          </nav>
+        </motion.div>
+      )} */}
     </div>
   );
 };
@@ -205,6 +322,7 @@ const NavButton: React.FC<NavButtonProps> = ({
         strokeWidth: active ? 2.5 : 2,
       } as any)}
     </div>
+
     {active && (
       <span
         // initial={{ opacity: 0 }}
@@ -217,4 +335,4 @@ const NavButton: React.FC<NavButtonProps> = ({
   </button>
 );
 
-export default App;
+export default NewApp;

@@ -29,22 +29,38 @@ import {
 import { Job, JobStatus } from "../../types";
 // import { GoogleGenAI } from "@google/genai";
 import "./TaskDetailView.css";
+import { useParams } from "react-router-dom";
 
-interface TaskDetailViewProps {
-  job: Job | null;
+interface JobsDetailsProps {
+  allJobs: Job[];
 }
 
-const TaskDetailView: React.FC<TaskDetailViewProps> = ({ job }) => {
+const TaskDetailView: React.FC<JobsDetailsProps> = ({ allJobs }) => {
   const [activeTab, setActiveTab] = useState<
     "details" | "ai" | "attachments" | "signature"
   >("details");
 
-  if (!job) return null;
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+
+  const { jobId } = useParams();
+  console.log("Current jobId from URL:", jobId);
+
+  useEffect(() => {
+    console.log("allJobs", allJobs);
+
+    if (jobId) {
+      const job = allJobs.find((j) => Number(j.id) === Number(jobId));
+      console.log("job", job);
+      setSelectedJob(job || null);
+    }
+  }, [jobId || allJobs]);
+
+  if (!selectedJob) return null;
 
   const statusClass =
-    job.status === JobStatus.COMPLETED
+    selectedJob.status === JobStatus.COMPLETED
       ? "completed"
-      : job.status === JobStatus.IN_PROGRESS
+      : selectedJob.status === JobStatus.IN_PROGRESS
         ? "in_progress"
         : "pending";
 
@@ -54,31 +70,31 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({ job }) => {
       <div className="job-header">
         <div className="header-top">
           <div className="job-id-status">
-            <span className="detail-job-id">{job.id}</span>
+            <span className="detail-job-id">J000{selectedJob.id}</span>
             <div className={`status-badge ${statusClass}`}>
-              {job.status === JobStatus.COMPLETED ? (
+              {selectedJob.status === JobStatus.COMPLETED ? (
                 <CheckCircle size={16} />
-              ) : job.status === JobStatus.IN_PROGRESS ? (
+              ) : selectedJob.status === JobStatus.IN_PROGRESS ? (
                 <PlayCircle size={16} />
               ) : (
                 <Clock size={16} />
               )}
-              <span className="status-text">{job.status}</span>
+              <span className="status-text">{selectedJob.status}</span>
             </div>
           </div>
           <div>
-            <h2 className="task-detail-job-title">{job.title}</h2>
+            <h2 className="task-detail-job-title">{selectedJob.title}</h2>
           </div>
         </div>
 
         <div className="priority-container">
           <div
-            className={`priority-badge ${job.priority === "High" ? "high" : "normal"}`}
+            className={`priority-badge ${selectedJob.priority === "High" ? "high" : "normal"}`}
           >
-            {job.priority} Priority
+            {selectedJob.priority} Priority
           </div>
           <div className="time-badge">
-            <Clock size={12} /> {job.time}
+            <Clock size={12} /> {selectedJob.time}
           </div>
         </div>
       </div>
@@ -116,8 +132,10 @@ const TaskDetailView: React.FC<TaskDetailViewProps> = ({ job }) => {
       {/* Tab Content */}
       <div className="job-tab-content">
         <AnimatePresence mode="wait">
-          {activeTab === "details" && <DetailsTab key="details" job={job} />}
-          {activeTab === "ai" && <AIChatTab key="ai" job={job} />}
+          {activeTab === "details" && (
+            <DetailsTab key="details" job={selectedJob} />
+          )}
+          {activeTab === "ai" && <AIChatTab key="ai" job={selectedJob} />}
           {activeTab === "attachments" && <AttachmentsTab key="attachments" />}
           {activeTab === "signature" && <SignatureTab key="signature" />}
         </AnimatePresence>
@@ -165,7 +183,7 @@ const DetailsTab: React.FC<DetailsTabProps> = ({ job }) => (
       <DetailItem
         icon={<Phone size={18} className="detail-icon" />}
         label="Primary Phone"
-        value="+1 (555) 019-3284"
+        value={job.contactNo}
       />
       <DetailItem
         icon={<MapPin size={18} className="detail-icon" />}

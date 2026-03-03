@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { MOCK_ACTIVITIES } from "../../constants";
 import {
   CheckCircle2,
   ArrowRight,
@@ -10,21 +9,65 @@ import {
   Power,
   Activity,
   Trophy,
+  Calendar,
 } from "lucide-react";
 
 import "./HomeView.css";
-
+import { getTimeAgo } from "../../../../Asset/Utils/commonUtils";
+import { IActivities } from "../../NewApp";
+import { getAccessToken } from "../../../../Asset/Config/authService";
+import {
+  clockIn,
+  clockOut,
+  getActiveClockRecord,
+  getCurrentUser,
+} from "../../Services";
+import { PublicClientApplication } from "@azure/msal-browser";
 interface HomeViewProps {
   onViewAllActivities: () => void;
+  onViewTodayJobs: () => void;
+  openJobDetails: (jobId: number) => void;
+  recentActivities: any[];
 }
 
-const HomeView: React.FC<HomeViewProps> = ({ onViewAllActivities }) => {
+const HomeView: React.FC<HomeViewProps> = ({
+  onViewAllActivities,
+  onViewTodayJobs,
+  openJobDetails,
+  recentActivities,
+}) => {
+  const msalConfig = {
+    auth: {
+      clientId: "8d876036-c3cf-4739-89b1-3e98fd2cb857",
+      authority:
+        "https://login.microsoftonline.com/3e8e53be-a48f-4147-adf8-7e90a6e46b57",
+      redirectUri: "/",
+    },
+    cache: {
+      cacheLocation: "sessionStorage",
+      storeAuthStateInCookie: false,
+    },
+  };
+
+  const msalInstance = new PublicClientApplication(msalConfig);
+
+  (async () => {
+    await msalInstance.initialize();
+  })();
+
   const [isClockedIn, setIsClockedIn] = useState(true);
+  const [clockInOut, setClockInOut] = useState<any>({});
   const [clockInTime, setClockInTime] = useState<Date | null>(
     new Date(new Date().setHours(8, 42, 0)),
   );
   const [elapsed, setElapsed] = useState("00:00:00");
 
+  console.log("HomeView rendered", {
+    isClockedIn,
+    clockInTime,
+    elapsed,
+    clockInOut,
+  });
   useEffect(() => {
     let interval: number;
 
@@ -32,11 +75,9 @@ const HomeView: React.FC<HomeViewProps> = ({ onViewAllActivities }) => {
       interval = window.setInterval(() => {
         const now = new Date();
         const diff = now.getTime() - clockInTime.getTime();
-
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
         setElapsed(
           `${hours.toString().padStart(2, "0")}:${minutes
             .toString()
@@ -48,11 +89,75 @@ const HomeView: React.FC<HomeViewProps> = ({ onViewAllActivities }) => {
     return () => clearInterval(interval);
   }, [isClockedIn, clockInTime]);
 
-  const handleToggleClock = () => {
-    if (isClockedIn) {
+  useEffect(() => {
+    const initClockStatus = async () => {
+      const accessToken = await getAccessToken(msalInstance);
+      if (!accessToken) {
+        console.error("Unable to obtain access token");
+        return;
+      }
+
+      const tenant = "chandrudemo.sharepoint.com";
+      const siteName = "FieldService";
+
+      const siteRes = await fetch(
+        `https://graph.microsoft.com/v1.0/sites/${tenant}:/sites/${siteName}`,
+        { headers: { Authorization: `Bearer ${accessToken}` } },
+      );
+
+      const siteData = await siteRes.json();
+      const siteId = siteData.id;
+
+      const user = await getCurrentUser(accessToken);
+
+      const activeRecord = await getActiveClockRecord(
+        accessToken,
+        siteId,
+        user.mail,
+      );
+
+      setClockInOut(activeRecord);
+
+      if (activeRecord) {
+        setIsClockedIn(true);
+        setClockInTime(new Date(activeRecord.fields.StartTime));
+      } else {
+        setIsClockedIn(false);
+      }
+    };
+
+    initClockStatus();
+  }, []);
+
+  const handleToggleClock = async () => {
+    const accessToken = await getAccessToken(msalInstance);
+    if (!accessToken) {
+      console.error("Unable to obtain access token");
+      return;
+    }
+
+    const tenant = "chandrudemo.sharepoint.com";
+    const siteName = "FieldService";
+
+    // Get Site ID
+    const siteRes = await fetch(
+      `https://graph.microsoft.com/v1.0/sites/${tenant}:/sites/${siteName}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } },
+    );
+
+    const siteData = await siteRes.json();
+    const siteId = siteData.id;
+
+    const user = await getCurrentUser(accessToken);
+    console.log("User:", user);
+
+    if (clockInOut && clockInOut?.id) {
+      await clockOut(accessToken, siteId, clockInOut.id);
       setIsClockedIn(false);
+      setClockInOut({});
       setClockInTime(null);
     } else {
+      await clockIn(accessToken, siteId, user.id);
       setIsClockedIn(true);
       setClockInTime(new Date());
     }
@@ -77,7 +182,7 @@ const HomeView: React.FC<HomeViewProps> = ({ onViewAllActivities }) => {
           </motion.div>
 
           <h2 className="banner-title">
-            Good shift,
+            Good shift v1,
             <br />
             <span>Henderson.</span>
           </h2>
@@ -90,8 +195,9 @@ const HomeView: React.FC<HomeViewProps> = ({ onViewAllActivities }) => {
             whileHover={{ x: 5 }}
             whileTap={{ scale: 0.95 }}
             className="primary-button"
+            onClick={onViewTodayJobs}
           >
-            Go to Tasks
+            Go to Jobs
             <ArrowRight size={16} />
           </motion.button>
         </div>
@@ -180,33 +286,42 @@ const HomeView: React.FC<HomeViewProps> = ({ onViewAllActivities }) => {
         <div className="logs-header">
           <h3>Recent Logs</h3>
           <button onClick={onViewAllActivities} className="history-btn">
-            History <ArrowRight size={14} />
+            View all <ArrowRight size={14} />
           </button>
         </div>
 
         <div className="logs-list">
-          {MOCK_ACTIVITIES.slice(0, 3).map((activity: any, index: number) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="log-card"
-            >
-              <div
-                className={`log-icon ${
-                  activity.type === "Job Completed" ? "green" : "blue"
-                }`}
+          {recentActivities
+            .slice(0, 3)
+            .map((activity: IActivities, index: number) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="log-card"
+                onClick={() => openJobDetails(activity.job)}
               >
-                <CheckCircle2 size={20} />
-              </div>
+                <div
+                  className={`log-icon ${
+                    activity.title === "Job Completed" ? "green" : "blue"
+                  }`}
+                >
+                  <CheckCircle2 size={20} />
+                </div>
 
-              <div className="log-content">
-                <p className="log-type">{activity.type}</p>
-                <p className="log-description">{activity.description}</p>
-              </div>
-            </motion.div>
-          ))}
+                <div className="log-content">
+                  <div className="log-header">
+                    <p className="log-type">{activity.title}</p>
+                    <div className="activity-time">
+                      <Calendar size={10} />
+                      {getTimeAgo(activity.created)}
+                    </div>
+                  </div>
+                  <p className="log-description">{activity.description}</p>
+                </div>
+              </motion.div>
+            ))}
         </div>
       </div>
 

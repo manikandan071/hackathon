@@ -14,6 +14,18 @@ export interface Job {
   time: string;
   status: JobStatus;
   priority: "High" | "Medium" | "Low";
+  startDate: string;
+  endDate: string;
+  customerRating: number;
+  customerFeedback: string;
+  customerId: string;
+  firstName: string;
+  lastName: string;
+  city: string;
+  contactNo: string;
+  contactEmail: string;
+  address1: string;
+  address2: string;
 }
 
 export interface Activity {

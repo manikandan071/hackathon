@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // import { motion } from "framer-motion";
 import {
   Settings,
@@ -16,15 +16,58 @@ import {
 } from "lucide-react";
 import "./ProfileView.css";
 
-const ProfileView: React.FC = () => {
-  const skills = [
-    "Systems Repair",
-    "Network Config",
-    "Diagnostics",
-    "Fiber Splicing",
-    "IoT Setup",
-    "Teams Admin",
-  ];
+import { PublicClientApplication } from "@azure/msal-browser";
+import { getAccessToken } from "../../../../Asset/Config/authService";
+import { getCurrentUser } from "../../Services";
+
+interface ProfileViewProps {
+  employeeDetails: any;
+}
+
+const ProfileView: React.FC<ProfileViewProps> = ({ employeeDetails }) => {
+  const [profileImage, setProfileImage] = useState<string>("");
+  console.log("profileImage", profileImage);
+
+  const msalConfig = {
+    auth: {
+      clientId: "8d876036-c3cf-4739-89b1-3e98fd2cb857",
+      authority:
+        "https://login.microsoftonline.com/3e8e53be-a48f-4147-adf8-7e90a6e46b57",
+      redirectUri: "/",
+    },
+    cache: {
+      cacheLocation: "sessionStorage",
+      storeAuthStateInCookie: false,
+    },
+  };
+
+  const msalInstance = new PublicClientApplication(msalConfig);
+
+  (async () => {
+    await msalInstance.initialize();
+  })();
+
+  useEffect(() => {
+    (async () => {
+      const accessToken = await getAccessToken(msalInstance);
+      const user = await getCurrentUser(accessToken ? accessToken : "");
+      const res = await fetch(
+        `https://graph.microsoft.com/v1.0/users/${user?.id}/photo/$value`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      console.log("Image response", res);
+
+      if (!res.ok) return null;
+
+      const blob = await res.blob();
+      setProfileImage(URL.createObjectURL(blob));
+    })();
+  }, [employeeDetails]);
+
   return (
     <div className="profile-container">
       {/* HEADER */}
@@ -40,13 +83,13 @@ const ProfileView: React.FC = () => {
           className="avatar-wrapper"
         >
           <div className="avatar">
-            <img src="https://picsum.photos/300/300?random=12" alt="Avatar" />
+            <img src={profileImage} alt="Avatar" />
           </div>
           <div className="status-indicator" />
         </div>
 
-        <h2>Alex Henderson</h2>
-        <div className="role-badge">Senior Tech Lead</div>
+        <h2>{employeeDetails?.employee}</h2>
+        <div className="role-badge">{employeeDetails?.role}</div>
 
         <div className="mini-badges">
           <MiniBadge
@@ -112,7 +155,7 @@ const ProfileView: React.FC = () => {
           <h3>Skillsets</h3>
         </div>
         <div className="skills">
-          {skills.map((skill, idx) => (
+          {employeeDetails?.skillSets.map((skill: any, idx: number) => (
             <span
               key={idx}
               //   initial={{ opacity: 0, scale: 0.9 }}
@@ -129,23 +172,23 @@ const ProfileView: React.FC = () => {
       {/* CONTACT */}
       <div className="section">
         <div className="section-header">
-          <h3>Direct Channels</h3>
+          <h3>Others</h3>
         </div>
         <div className="info-card">
           <InfoRow
             icon={<Mail size={18} color="#cbd5e1" />}
-            label="Teams Enterprise"
-            value="alex.h@teams-hq.ms"
+            label="Email"
+            value={employeeDetails?.contactEmail}
           />
           <InfoRow
             icon={<Phone size={18} color="#cbd5e1" />}
-            label="Secure Voip"
-            value="+1 (555) 012-TECH"
+            label="Phone"
+            value={employeeDetails?.contactNo}
           />
           <InfoRow
             icon={<MapPin size={18} color="#cbd5e1" />}
-            label="Base Region"
-            value="San Francisco Zone"
+            label="Location"
+            value={employeeDetails?.city}
           />
         </div>
       </div>

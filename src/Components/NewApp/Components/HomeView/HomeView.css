@@ -210,12 +210,19 @@
     overflow: hidden;
 }
 
+.log-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .log-type {
     font-size: 10px;
     font-weight: 800;
     color: #90a7c2;
     text-transform: uppercase;
-    margin-bottom: 4px;
+    margin: 0px;
+
 }
 
 .log-description {
@@ -225,6 +232,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin: 5px 0px;
 }
 
 /* Trust Banner */
